@@ -1,0 +1,30 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.pytest_cache/
+
+# Virtual env
+.venv/
+venv/
+
+# Streamlit / local secrets
+.streamlit/secrets.toml
+.env
+.env.*
+!.env.example
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# Generated outputs
+output/*.md
+output/*.pdf
+output/*.jsonl
+output/material_index.json
+output/db_quality_report.json
+app_data.db
