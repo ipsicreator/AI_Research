@@ -7,7 +7,6 @@ from typing import Dict, List
 import streamlit as st
 
 from ai_setuk_generator import TopicResult, UserProfile, load_topic_bank, local_generate, render_markdown
-from integrations.google_sheets import append_personal_row, append_result_rows, check_google_sheet_ready
 from utils.history_store import get_recent_history, save_history_event
 from utils.local_db import DB_PATH, init_db, save_submission
 from utils.material_extractor import build_material_index
@@ -15,11 +14,7 @@ from utils.openai_enhancer import has_openai_key
 from utils.pdf_export import markdown_to_pdf_bytes
 
 
-BRAND_OPTIONS = [
-    "대치 수프리마 교과탐구",
-    "수프리마 탐구설계 랩",
-    "수프리마 세특 스튜디오",
-]
+BRAND_NAME = "수프리마 AI 탐구 세특 솔루션"
 
 
 def _bootstrap_env_from_secrets() -> None:
@@ -32,25 +27,37 @@ def _bootstrap_env_from_secrets() -> None:
     except Exception:
         return
     for key in [
-        "APPS_SCRIPT_WEB_APP_URL",
-        "APPS_SCRIPT_TOKEN",
-        "GOOGLE_SERVICE_ACCOUNT_FILE",
-        "GOOGLE_SHEETS_ID",
         "OPENAI_API_KEY",
+        "OPENAPI_API_KEY",
         "OPENAI_MODEL",
     ]:
         if key not in os.environ and key in secrets:
             os.environ[key] = str(secrets.get(key, ""))
+    # Accept common typo key as alias to prevent missing OpenAI key.
+    if not os.environ.get("OPENAI_API_KEY", "").strip():
+        alias = os.environ.get("OPENAPI_API_KEY", "").strip()
+        if alias:
+            os.environ["OPENAI_API_KEY"] = alias
 
 
 def _inject_style() -> None:
     st.markdown(
         """
 <style>
+section.main > div.block-container {
+  max-width: 1100px;
+  margin-left: auto;
+  margin-right: auto;
+}
 .hero-box {padding: 18px 20px; border-radius: 14px; background: linear-gradient(135deg,#0f1f3a 0%,#15355f 100%); color: #f5f8ff;}
 .hero-title {font-size: 34px; font-weight: 800; margin-bottom: 4px;}
 .hero-sub {font-size: 15px; opacity: 0.95;}
 .report-card {border:1px solid #d9e1ee; border-radius: 12px; padding: 14px; background:#fbfdff;}
+@media (max-width: 1024px) {
+  section.main > div.block-container {
+    max-width: 100%;
+  }
+}
 </style>
         """,
         unsafe_allow_html=True,
@@ -128,7 +135,7 @@ def main() -> None:
     if "generated_packets" not in st.session_state:
         st.session_state.generated_packets = []
 
-    brand = st.selectbox("브랜드", BRAND_OPTIONS, index=0)
+    brand = BRAND_NAME
     st.markdown(
         f"<div class='hero-box'><div class='hero-title'>{brand}</div>"
         "<div class='hero-sub'>교사용 입력폼 · 주제 추천 선택 · 세특 보고서 다운로드</div></div>",
@@ -140,12 +147,6 @@ def main() -> None:
     recent_records = get_recent_history(days=7)
     st.info(f"최근 7일 누적 생성 건수: {len(recent_records)}건")
     st.caption(f"로컬 DB 파일: {DB_PATH}")
-
-    sheet_ready, sheet_reason = check_google_sheet_ready()
-    if sheet_ready:
-        st.success(f"시트 연동 상태: {sheet_reason}")
-    else:
-        st.warning(f"시트 연동 미설정: {sheet_reason}")
 
     openai_ready = has_openai_key()
     st.info("OpenAI 고도화 상태: " + ("활성 가능" if openai_ready else "API 키 없음(로컬 생성 모드)"))
@@ -245,32 +246,6 @@ def main() -> None:
         save_history_event(packet)
         save_submission(packet)
         st.success(f"{student_name} 학생 추천 {len(results)}건이 생성되었습니다. 목록에서 1개를 선택해 상세를 확인하세요.")
-
-        if sheet_ready:
-            try:
-                append_personal_row(
-                    created_at=created_at,
-                    student_name=packet["student_name"],
-                    school_name=packet["school_name"],
-                    student_phone=packet["student_phone"],
-                    student_email=packet["student_email"],
-                    parent_phone=packet["parent_phone"],
-                    grade=packet["grade"],
-                    teacher_name=packet["teacher_name"],
-                )
-                append_result_rows(
-                    created_at=created_at,
-                    student_name=packet["student_name"],
-                    school_name=packet["school_name"],
-                    subject=packet["subject"],
-                    interests=packet["interests"],
-                    career_hint=packet["career_hint"],
-                    results=[TopicResult(**r) for r in packet["results"]],
-                    teacher_name=packet["teacher_name"],
-                )
-                st.info("구글시트 저장 완료 (개인정보 + 생성결과)")
-            except Exception as exc:
-                st.warning(f"구글시트 저장 실패: {exc}")
 
     st.subheader("학생별 생성 결과")
     if not st.session_state.generated_packets:
