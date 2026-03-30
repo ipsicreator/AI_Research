@@ -45,7 +45,7 @@ def _inject_style() -> None:
         """
 <style>
 section.main > div.block-container {
-  max-width: 1100px;
+  max-width: 960px;
   margin-left: auto;
   margin-right: auto;
 }
@@ -67,14 +67,15 @@ section.main > div.block-container {
 def validate_required_fields(payload: Dict[str, str]) -> List[str]:
     missing = []
     for key, label in [
-        ("teacher_name", "교사명"),
-        ("teacher_school", "학교명"),
+        ("consultant_name", "담당컨설턴트"),
+        ("school_name", "학교명"),
         ("student_name", "학생 이름"),
         ("student_phone", "학생 전화연락처"),
         ("student_email", "학생 메일주소"),
         ("parent_phone", "학부모 연락처"),
         ("grade", "학년"),
         ("subject", "과목"),
+        ("career_hint", "희망진로/학과"),
     ]:
         if not payload.get(key, "").strip():
             missing.append(label)
@@ -161,12 +162,12 @@ def main() -> None:
         st.write(f"- 본문 추출 성공: {extracted}개")
 
     with st.form("teacher_student_form"):
-        st.subheader("교사 정보")
-        t1, t2 = st.columns(2)
-        with t1:
-            teacher_name = st.text_input("교사명")
-        with t2:
-            teacher_school = st.text_input("학교명")
+        st.subheader("컨설팅 운영 정보")
+        op1, op2 = st.columns([2, 3])
+        with op1:
+            consultant_name = st.text_input("담당컨설턴트")
+        with op2:
+            center_name = st.text_input("운영기관", value="대치 수프리마 입시&코칭 센터")
 
         st.subheader("학생 정보")
         c1, c2 = st.columns(2)
@@ -176,12 +177,13 @@ def main() -> None:
             parent_phone = st.text_input("학부모 연락처")
         with c2:
             student_email = st.text_input("학생 메일주소")
-            grade = st.text_input("학년", placeholder="예: 고1")
-            subject = st.selectbox("과목 선택", subjects, index=0)
+            school_name = st.text_input("학교명")
+            grade = st.selectbox("학년", ["중1", "중2", "중3", "고1", "고2", "고3"], index=3)
 
-        st.subheader("탐구 설정")
-        interests_raw = st.text_input("관심 키워드 (쉼표 구분)", placeholder="예: 환경, 데이터, 미디어")
-        career_hint = st.text_input("희망 진로/관심 분야", placeholder="예: 환경공학")
+        st.subheader("탐구 흐름")
+        subject = st.selectbox("1) 과목 선택", subjects, index=0)
+        career_hint = st.text_input("2) 희망진로/학과", placeholder="예: 환경공학")
+        interests_raw = st.text_input("3) 관심 키워드 (쉼표 구분, 최대 3개)", placeholder="예: 환경, 데이터, 미디어")
         recommendation_count = st.slider("추천 주제 개수", min_value=3, max_value=10, value=5, step=1)
         strict_dedup = st.checkbox("완전 중복 금지(같은 원주제 최대 2개)", value=True)
         use_openai = st.checkbox("OpenAI로 세특 문장 고도화", value=openai_ready)
@@ -189,14 +191,15 @@ def main() -> None:
 
     if submitted:
         payload = {
-            "teacher_name": teacher_name,
-            "teacher_school": teacher_school,
+            "consultant_name": consultant_name,
+            "school_name": school_name,
             "student_name": student_name,
             "student_phone": student_phone,
             "student_email": student_email,
             "parent_phone": parent_phone,
             "grade": grade,
             "subject": subject,
+            "career_hint": career_hint,
         }
         missing = validate_required_fields(payload)
         if missing:
@@ -204,6 +207,9 @@ def main() -> None:
             return
 
         interests = [x.strip() for x in interests_raw.split(",") if x.strip()]
+        if len(interests) > 3:
+            st.error("관심 키워드는 최대 3개까지 입력할 수 있습니다.")
+            return
         profile = UserProfile(
             student_name=student_name.strip(),
             grade=grade.strip(),
@@ -227,10 +233,10 @@ def main() -> None:
         packet = {
             "created_at": created_at,
             "brand": brand,
-            "teacher_name": teacher_name.strip(),
-            "teacher_school": teacher_school.strip(),
+            "teacher_name": consultant_name.strip(),
+            "teacher_school": center_name.strip(),
             "student_name": student_name.strip(),
-            "school_name": teacher_school.strip(),
+            "school_name": school_name.strip(),
             "student_phone": student_phone.strip(),
             "student_email": student_email.strip(),
             "parent_phone": parent_phone.strip(),
