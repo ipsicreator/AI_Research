@@ -52,6 +52,22 @@ def init_db(db_path: Path = DB_PATH) -> None:
             )
             """
         )
+        cur.execute(
+            """
+            CREATE TABLE IF NOT EXISTS consult_requests (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                created_at TEXT NOT NULL,
+                parent_name TEXT,
+                student_name TEXT,
+                student_grade TEXT,
+                phone TEXT,
+                email TEXT,
+                preferred_time TEXT,
+                note TEXT,
+                status TEXT DEFAULT 'new'
+            )
+            """
+        )
         conn.commit()
     finally:
         conn.close()
@@ -117,3 +133,32 @@ def save_submission(packet: Dict[str, Any], db_path: Path = DB_PATH) -> int:
     finally:
         conn.close()
 
+
+def save_consult_request(payload: Dict[str, Any], db_path: Path = DB_PATH) -> int:
+    init_db(db_path)
+    conn = sqlite3.connect(db_path)
+    try:
+        cur = conn.cursor()
+        cur.execute(
+            """
+            INSERT INTO consult_requests (
+                created_at, parent_name, student_name, student_grade,
+                phone, email, preferred_time, note, status
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """,
+            (
+                payload.get("created_at", ""),
+                payload.get("parent_name", ""),
+                payload.get("student_name", ""),
+                payload.get("student_grade", ""),
+                payload.get("phone", ""),
+                payload.get("email", ""),
+                payload.get("preferred_time", ""),
+                payload.get("note", ""),
+                payload.get("status", "new"),
+            ),
+        )
+        conn.commit()
+        return int(cur.lastrowid)
+    finally:
+        conn.close()
