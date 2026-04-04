@@ -1,0 +1,41 @@
+﻿<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="860" viewBox="0 0 1400 860">
+  <rect width="1400" height="860" fill="#070d1a"/>
+  <text x="700" y="110" text-anchor="middle" font-size="56" font-weight="700" fill="#eaf0ff" font-family="Malgun Gothic, Arial">나의 입시 위치 진단 서비스</text>
+  <text x="700" y="165" text-anchor="middle" font-size="34" font-weight="600" fill="#c8d3ef" font-family="Malgun Gothic, Arial">by 대치수프리마</text>
+
+  <rect x="120" y="230" width="220" height="62" rx="12" fill="#2452ff" stroke="#4b77ff"/>
+  <text x="230" y="270" text-anchor="middle" font-size="26" font-weight="700" fill="#ffffff" font-family="Malgun Gothic, Arial">1. 사용자정보</text>
+  <rect x="356" y="230" width="220" height="62" rx="12" fill="#1b2338" stroke="#3a4f83"/>
+  <text x="466" y="270" text-anchor="middle" font-size="24" font-weight="700" fill="#d8e2fb" font-family="Malgun Gothic, Arial">1.5 내신계산</text>
+  <rect x="592" y="230" width="220" height="62" rx="12" fill="#1b2338" stroke="#3a4f83"/>
+  <text x="702" y="270" text-anchor="middle" font-size="24" font-weight="700" fill="#d8e2fb" font-family="Malgun Gothic, Arial">2. 학생부 분석</text>
+  <rect x="828" y="230" width="220" height="62" rx="12" fill="#1b2338" stroke="#3a4f83"/>
+  <text x="938" y="270" text-anchor="middle" font-size="24" font-weight="700" fill="#d8e2fb" font-family="Malgun Gothic, Arial">3. 희망대학</text>
+  <rect x="1064" y="230" width="220" height="62" rx="12" fill="#1b2338" stroke="#3a4f83"/>
+  <text x="1174" y="270" text-anchor="middle" font-size="24" font-weight="700" fill="#d8e2fb" font-family="Malgun Gothic, Arial">4. 종합보고서</text>
+
+  <line x1="120" y1="340" x2="1284" y2="340" stroke="#1e2a45" stroke-width="2"/>
+
+  <rect x="120" y="370" width="1164" height="430" rx="14" fill="#0d1324" stroke="#263452" stroke-width="2"/>
+  <text x="145" y="430" font-size="48" font-weight="700" fill="#e7edf8" font-family="Malgun Gothic, Arial">1단계 - 사용자정보</text>
+
+  <text x="145" y="485" font-size="24" fill="#d5deef" font-family="Malgun Gothic, Arial">학생명 *</text>
+  <rect x="145" y="500" width="520" height="58" rx="10" fill="#222739" stroke="#3b4662"/>
+  <text x="725" y="485" font-size="24" fill="#d5deef" font-family="Malgun Gothic, Arial">학생 전화번호 *</text>
+  <rect x="725" y="500" width="520" height="58" rx="10" fill="#222739" stroke="#3b4662"/>
+
+  <text x="145" y="590" font-size="24" fill="#d5deef" font-family="Malgun Gothic, Arial">학교명 *</text>
+  <rect x="145" y="605" width="520" height="58" rx="10" fill="#222739" stroke="#3b4662"/>
+  <text x="725" y="590" font-size="24" fill="#d5deef" font-family="Malgun Gothic, Arial">메일주소(필수) *</text>
+  <rect x="725" y="605" width="520" height="58" rx="10" fill="#222739" stroke="#3b4662"/>
+
+  <text x="145" y="695" font-size="24" fill="#d5deef" font-family="Malgun Gothic, Arial">학년 *</text>
+  <rect x="145" y="710" width="520" height="58" rx="10" fill="#222739" stroke="#3b4662"/>
+  <text x="725" y="695" font-size="24" fill="#d5deef" font-family="Malgun Gothic, Arial">학부모 연락처 *</text>
+  <rect x="725" y="710" width="520" height="58" rx="10" fill="#222739" stroke="#3b4662"/>
+
+  <rect x="1070" y="710" width="175" height="58" rx="10" fill="#2452ff" stroke="#4b77ff"/>
+  <text x="1158" y="748" text-anchor="middle" font-size="24" font-weight="700" fill="#ffffff" font-family="Malgun Gothic, Arial">다음 단계</text>
+
+  <text x="700" y="840" text-anchor="middle" font-size="20" fill="#9faed0" font-family="Malgun Gothic, Arial">자료: 대학어디가 | 운영: 대치수프리마</text>
+</svg>
